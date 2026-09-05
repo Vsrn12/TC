@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Productos</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="nav-links">
+      <a href="/" class="active">Productos</a>
+      <a href="/carrito">Carrito</a>
+    </nav>
+
+    <h1>Gestión de Productos</h1>
+
+    <form id="product-form">
+      <input type="hidden" id="product-id">
+      <div class="form-row">
+        <input type="text" id="nombre" placeholder="Nombre del producto" required>
+        <input type="number" id="precio" placeholder="Precio" step="0.01" min="0.01" required>
+        <button type="submit" id="submit-btn">Agregar</button>
+        <button type="button" id="cancel-btn" class="hidden">Cancelar</button>
+      </div>
+    </form>
+
+    <p id="error-message" class="error hidden"></p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="products-table-body"></tbody>
+    </table>
+  </div>
+
+  <script src="/static/products.js"></script>
+</body>
+</html>

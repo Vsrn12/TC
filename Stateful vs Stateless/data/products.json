@@ -1,0 +1,22 @@
+[
+  { "id": 1, "nombre": "Arroz 1kg", "precio": 4.5 },
+  { "id": 2, "nombre": "Azúcar 1kg", "precio": 3.8 },
+  { "id": 3, "nombre": "Aceite 1L", "precio": 9.9 },
+  { "id": 4, "nombre": "Fideos 500g", "precio": 3.2 },
+  { "id": 5, "nombre": "Leche evaporada", "precio": 4.1 },
+  { "id": 6, "nombre": "Huevos x30", "precio": 15.5 },
+  { "id": 7, "nombre": "Pan francés", "precio": 0.4 },
+  { "id": 8, "nombre": "Pollo entero", "precio": 18.9 },
+  { "id": 9, "nombre": "Carne molida 1kg", "precio": 22.5 },
+  { "id": 10, "nombre": "Atún en lata", "precio": 5.3 },
+  { "id": 11, "nombre": "Papa 1kg", "precio": 2.5 },
+  { "id": 12, "nombre": "Cebolla 1kg", "precio": 2.2 },
+  { "id": 13, "nombre": "Tomate 1kg", "precio": 3.0 },
+  { "id": 14, "nombre": "Manzana 1kg", "precio": 5.8 },
+  { "id": 15, "nombre": "Plátano 1kg", "precio": 2.9 },
+  { "id": 16, "nombre": "Queso fresco 500g", "precio": 12.0 },
+  { "id": 17, "nombre": "Mantequilla 200g", "precio": 6.5 },
+  { "id": 18, "nombre": "Café instantáneo", "precio": 11.2 },
+  { "id": 19, "nombre": "Gaseosa 3L", "precio": 8.5 },
+  { "id": 20, "nombre": "Papel higiénico x4", "precio": 7.9 }
+]

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrito de Compras</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="nav-links">
+      <a href="/">Productos</a>
+      <a href="/carrito" class="active">Carrito</a>
+    </nav>
+
+    <h1>Carrito de Compras</h1>
+
+    <h2>Catálogo del Supermercado</h2>
+    <div id="catalogo-grid" class="catalogo-grid"></div>
+
+    <h2>Tu Carrito</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Precio</th>
+          <th>Cantidad</th>
+          <th>Subtotal</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="carrito-table-body"></tbody>
+    </table>
+
+    <div class="carrito-resumen">
+      <p>Subtotal: <span id="carrito-subtotal">S/ 0.00</span></p>
+      <p>IGV (18%): <span id="carrito-igv">S/ 0.00</span></p>
+      <p>Costo de bolsa: <span id="carrito-bolsa">S/ 0.00</span></p>
+      <p class="total">Total: <span id="carrito-total">S/ 0.00</span></p>
+    </div>
+  </div>
+
+  <script src="/static/cart.js"></script>
+</body>
+</html>
