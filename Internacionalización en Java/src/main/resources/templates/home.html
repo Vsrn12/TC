@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{title}">Questionnaire</title>
+</head>
+<body>
+    <main>
+        <h1 th:text="#{title}">Questionnaire</h1>
+        <p th:text="#{message}">Answer these three questions.</p>
+
+        <form th:action="@{/(lang=${#locale.language})}" method="post">
+            <div style="position: relative; text-align: right;">
+                <span th:text="${#messages.msg('date.label') + ' ' + currentDate}">Date: 09/09/2026</span>
+            </div>
+
+            <label for="name" th:text="#{question.name}">What is your name?</label>
+            <input id="name" name="name" type="text" required>
+
+            <label for="age" th:text="#{question.age}">How old are you?</label>
+            <input id="age" name="age" type="number" min="0" required>
+
+            <label for="city" th:text="#{question.city}">What city do you live in?</label>
+            <input id="city" name="city" type="text" required>
+
+            <button type="submit" th:text="#{submit}">Submit</button>
+        </form>
+    </main>
+</body>
+</html>
