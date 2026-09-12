@@ -10,6 +10,8 @@ Aplicación web desarrollada con **Java**, **Spring Boot**, **Spring MVC** y **T
 - Permite responderlas mediante un formulario.
 - Incluye traducciones en español e inglés.
 - Cambia el idioma con `?lang=es` o `?lang=en`.
+- Incluye un botón desplegable tipo popup para seleccionar el idioma.
+- Organiza las preguntas verticalmente para facilitar la lectura y respuesta.
 - Muestra la fecha actual en la esquina del formulario: `dd/MM/yyyy` en español y `MM/dd/yyyy` en inglés de Estados Unidos.
 - Conserva el idioma seleccionado en una cookie durante la navegación.
 
@@ -25,6 +27,7 @@ Internacionalización en Java/
 │   │   │   └── MvcConfigurer.java         # Configuración de idioma
 │   │   └── resources/
 │   │       ├── templates/home.html        # Formulario
+│   │       ├── static/css/styles.css      # Estilos del formulario
 │   │       ├── messages.properties        # Inglés
 │   │       └── messages_es.properties     # Español
 │   └── test/                              # Pruebas del contexto
