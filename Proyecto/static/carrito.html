@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="cart.heading">Carrito de Compras</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="page-header">
+    <span class="api-badge">Api: Open Exchange Rates (Cambio de moneda constante)</span>
+    <div class="locale-bar">
+      <span id="current-date" class="current-date"></span>
+      <select id="locale-select" class="locale-select" data-i18n-aria-label="locale.label" aria-label="Idioma y región">
+        <option value="pe">PE (Español)</option>
+        <option value="us">EEUU (English)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="container">
+    <header class="topbar">
+      <nav class="nav-links">
+        <a href="/" data-i18n="nav.products">Productos</a>
+        <a href="/carrito" class="active" data-i18n="nav.cart">Carrito</a>
+      </nav>
+    </header>
+
+    <h1 data-i18n="cart.heading">Carrito de Compras</h1>
+
+    <h2 data-i18n="cart.catalog">Catálogo del Supermercado</h2>
+    <div id="catalogo-grid" class="catalogo-grid"></div>
+
+    <h2 data-i18n="cart.yourCart">Tu Carrito</h2>
+    <table>
+      <thead>
+        <tr>
+          <th data-i18n="cart.product">Producto</th>
+          <th data-i18n="cart.price">Precio</th>
+          <th data-i18n="cart.quantity">Cantidad</th>
+          <th data-i18n="cart.subtotal">Subtotal</th>
+          <th data-i18n="cart.actions">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="carrito-table-body"></tbody>
+    </table>
+
+    <div class="carrito-resumen">
+      <p><span data-i18n="cart.subtotal">Subtotal</span>: <span id="carrito-subtotal">S/ 0.00</span></p>
+      <p><span data-i18n="cart.tax">IGV (18%)</span>: <span id="carrito-igv">S/ 0.00</span></p>
+      <p><span data-i18n="cart.bag">Costo de bolsa</span>: <span id="carrito-bolsa">S/ 0.00</span></p>
+      <p class="total"><span data-i18n="cart.total">Total</span>: <span id="carrito-total">S/ 0.00</span></p>
+    </div>
+  </div>
+
+  <script src="/static/i18n.js"></script>
+  <script src="/static/cart.js"></script>
+</body>
+</html>

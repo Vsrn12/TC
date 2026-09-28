@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="products.heading">Gestión de Productos</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="page-header">
+    <span class="api-badge">Api: Open Exchange Rates (Cambio de moneda constante)</span>
+    <div class="locale-bar">
+      <span id="current-date" class="current-date"></span>
+      <select id="locale-select" class="locale-select" data-i18n-aria-label="locale.label" aria-label="Idioma y región">
+        <option value="pe">PE (Español)</option>
+        <option value="us">EEUU (English)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="container">
+    <header class="topbar">
+      <nav class="nav-links">
+        <a href="/" class="active" data-i18n="nav.products">Productos</a>
+        <a href="/carrito" data-i18n="nav.cart">Carrito</a>
+      </nav>
+    </header>
+
+    <h1 data-i18n="products.heading">Gestión de Productos</h1>
+
+    <form id="product-form" novalidate>
+      <input type="hidden" id="product-id">
+      <div class="form-row">
+        <div class="field">
+          <input type="text" id="nombre" data-i18n-placeholder="form.name" placeholder="Nombre del producto" autocomplete="off">
+          <small class="field-error" id="nombre-error" role="alert"></small>
+        </div>
+        <div class="field">
+          <input type="text" id="precio" inputmode="decimal" data-i18n-placeholder="form.price" placeholder="Precio (S/)" autocomplete="off">
+          <small class="field-error" id="precio-error" role="alert"></small>
+        </div>
+        <button type="submit" id="submit-btn">Agregar</button>
+        <button type="button" id="cancel-btn" class="hidden" data-i18n="form.cancel">Cancelar</button>
+      </div>
+    </form>
+
+    <p id="error-message" class="error hidden"></p>
+
+    <table>
+      <thead>
+        <tr>
+          <th data-i18n="table.id">ID</th>
+          <th data-i18n="table.name">Nombre</th>
+          <th data-i18n="table.price">Precio</th>
+          <th data-i18n="table.actions">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="products-table-body"></tbody>
+    </table>
+  </div>
+
+  <script src="/static/i18n.js"></script>
+  <script src="/static/validation.js"></script>
+  <script src="/static/products.js"></script>
+</body>
+</html>
