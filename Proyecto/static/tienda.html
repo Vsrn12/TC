@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MercaFresh · Supermercado en línea</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="announce">
+    <span class="api-badge">Api: Open Exchange Rates (Cambio de moneda constante)</span>
+    <span class="announce-center"><span data-i18n="announce.fx">Tipo de cambio en vivo</span>: <strong id="fx-rate">1 USD = S/ 3.75</strong><span class="announce-sep">·</span><span class="inline-icon" data-icon="truck"></span><span data-i18n="announce.shipping">Delivery gratis en Lima</span></span>
+    <div class="locale-bar">
+      <span id="current-date" class="current-date"></span>
+      <select id="locale-select" class="locale-select" data-i18n-aria-label="locale.label" aria-label="Idioma y región">
+        <option value="pe">PE (Español)</option>
+        <option value="us">EEUU (English)</option>
+      </select>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <a href="/" class="brand"><span class="brand-logo" data-icon="shopping-basket"></span><span class="brand-name">Merca<span>Fresh</span></span></a>
+    <label class="search">
+      <span class="search-icon" data-icon="search"></span>
+      <input type="search" id="search-input" data-i18n-placeholder="store.search" placeholder="Buscar productos…" autocomplete="off">
+    </label>
+    <nav class="nav-links">
+      <a href="/" class="active" data-i18n="nav.store">Tienda</a>
+      <a href="/admin" data-i18n="nav.admin">Panel admin</a>
+    </nav>
+    <span id="rt-status" class="rt-status offline" role="status"></span>
+    <button type="button" id="cart-button" class="cart-button">
+      <span class="cart-icon" data-icon="shopping-cart"></span>
+      <span data-i18n="cart.title">Carrito</span>
+      <span id="cart-count" class="cart-count">0</span>
+    </button>
+  </header>
+
+  <main class="store">
+    <section class="hero">
+      <div class="hero-text">
+        <span class="hero-tag"><span class="pulse-dot"></span><span data-i18n="hero.tag">Stock en tiempo real</span></span>
+        <h1 data-i18n="hero.title">Lo fresco del mercado, en tu puerta</h1>
+        <p data-i18n="hero.subtitle">Elige tus productos, resérvalos al instante y confirma tu pedido en segundos.</p>
+        <a href="#catalogo" class="btn btn-light" data-i18n="hero.cta">Comprar ahora</a>
+        <div class="hero-stats">
+          <div><strong id="hero-products">0</strong><span data-i18n="hero.products">productos</span></div>
+          <div><strong id="hero-categories">0</strong><span data-i18n="hero.categories">categorías</span></div>
+          <div><strong id="hero-online">0</strong><span data-i18n="hero.online">comprando ahora</span></div>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <span class="float f1" data-icon="apple"></span>
+        <span class="float f2" data-icon="milk"></span>
+        <span class="float f3" data-icon="croissant"></span>
+        <span class="float f4" data-icon="coffee"></span>
+        <span class="float f5" data-icon="wheat"></span>
+        <span class="float f6" data-icon="fish"></span>
+        <span class="hero-basket" data-icon="shopping-basket"></span>
+      </div>
+    </section>
+
+    <section id="catalogo" class="catalog">
+      <div class="catalog-head">
+        <h2 data-i18n="store.catalog">Nuestros productos</h2>
+        <label class="sort">
+          <span data-i18n="store.sort">Ordenar</span>
+          <select id="sort-select">
+            <option value="relevancia" data-i18n="sort.relevance">Destacados</option>
+            <option value="precio-asc" data-i18n="sort.priceAsc">Precio: menor a mayor</option>
+            <option value="precio-desc" data-i18n="sort.priceDesc">Precio: mayor a menor</option>
+            <option value="nombre" data-i18n="sort.name">Nombre A-Z</option>
+          </select>
+        </label>
+      </div>
+      <div id="category-chips" class="chips" role="tablist"></div>
+      <div id="catalogo-grid" class="product-grid">
+        <div class="product-card skeleton"></div>
+        <div class="product-card skeleton"></div>
+        <div class="product-card skeleton"></div>
+        <div class="product-card skeleton"></div>
+      </div>
+      <div id="empty-state" class="empty-state hidden">
+        <span class="empty-icon" data-icon="search"></span>
+        <p data-i18n="store.empty">No encontramos productos con esa búsqueda</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span class="brand-name small">Merca<span>Fresh</span></span>
+    <span data-i18n="footer.text">Proyecto académico · Arquitectura en N capas con FastAPI</span>
+    <span data-i18n="footer.tech">Compra segura · Stock en tiempo real · Delivery en Lima</span>
+    <span>Piero Delgado</span>
+  </footer>
+
+  <!-- Carrito: panel lateral -->
+  <div id="overlay" class="overlay"></div>
+  <aside id="cart-drawer" class="drawer" aria-hidden="true" aria-labelledby="cart-title">
+    <div class="drawer-head">
+      <h2 id="cart-title"><span data-i18n="cart.yourCart">Tu carrito</span> <span id="drawer-count" class="pill">0</span></h2>
+      <button type="button" class="icon-btn" id="close-cart" aria-label="Cerrar" data-icon="x"></button>
+    </div>
+    <div id="carrito-items" class="drawer-body"></div>
+    <div class="drawer-foot">
+      <div class="summary-row"><span data-i18n="cart.subtotal">Subtotal</span><span id="carrito-subtotal">S/ 0.00</span></div>
+      <div class="summary-row"><span data-i18n="cart.tax">IGV (18%)</span><span id="carrito-igv">S/ 0.00</span></div>
+      <div class="summary-row"><span data-i18n="cart.bag">Bolsa</span><span id="carrito-bolsa">S/ 0.00</span></div>
+      <div class="summary-row total"><span data-i18n="cart.total">Total</span><span id="carrito-total">S/ 0.00</span></div>
+      <button type="button" id="btn-checkout" class="btn btn-primary btn-block" data-i18n="cart.checkout" disabled>Finalizar compra</button>
+      <p class="drawer-note" data-i18n="cart.reservedNote">Tus productos quedan reservados mientras tengas la página abierta.</p>
+    </div>
+  </aside>
+
+  <!-- Checkout y comprobante -->
+  <div id="checkout-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="checkout-title">
+    <div class="modal-card">
+      <button type="button" class="icon-btn modal-close" id="close-checkout" aria-label="Cerrar" data-icon="x"></button>
+
+      <div id="checkout-step">
+        <h2 id="checkout-title" data-i18n="checkout.title">Datos de entrega</h2>
+        <p class="muted" data-i18n="checkout.subtitle">Completa tus datos para confirmar el pedido.</p>
+        <form id="checkout-form" novalidate>
+          <div class="form-grid">
+            <label class="field span-2">
+              <span data-i18n="checkout.name">Nombre y apellido</span>
+              <input type="text" id="c-nombre" autocomplete="name" placeholder="Ana Torres">
+              <small class="field-error" id="c-nombre-error" role="alert"></small>
+            </label>
+            <label class="field">
+              <span data-i18n="checkout.document">DNI</span>
+              <input type="text" id="c-documento" inputmode="numeric" maxlength="8" placeholder="12345678">
+              <small class="field-error" id="c-documento-error" role="alert"></small>
+            </label>
+            <label class="field">
+              <span data-i18n="checkout.phone">Celular</span>
+              <input type="text" id="c-telefono" inputmode="tel" maxlength="9" autocomplete="tel" placeholder="987654321">
+              <small class="field-error" id="c-telefono-error" role="alert"></small>
+            </label>
+            <label class="field span-2">
+              <span data-i18n="checkout.email">Correo electrónico</span>
+              <input type="text" id="c-email" inputmode="email" autocomplete="email" placeholder="ana@correo.com">
+              <small class="field-error" id="c-email-error" role="alert"></small>
+            </label>
+            <label class="field span-2">
+              <span data-i18n="checkout.address">Dirección de entrega</span>
+              <input type="text" id="c-direccion" autocomplete="street-address" placeholder="Av. Arequipa 1234, Lince">
+              <small class="field-error" id="c-direccion-error" role="alert"></small>
+            </label>
+            <fieldset class="field span-2 pay-options">
+              <legend data-i18n="checkout.payment">Método de pago</legend>
+              <label class="pay-option"><input type="radio" name="metodo_pago" value="tarjeta" checked><span class="pay-card"><span data-icon="credit-card"></span><span data-i18n="pay.tarjeta">Tarjeta</span></span></label>
+              <label class="pay-option"><input type="radio" name="metodo_pago" value="yape"><span class="pay-card"><span data-icon="smartphone"></span><span data-i18n="pay.yape">Yape</span></span></label>
+              <label class="pay-option"><input type="radio" name="metodo_pago" value="efectivo"><span class="pay-card"><span data-icon="banknote"></span><span data-i18n="pay.efectivo">Efectivo</span></span></label>
+              <small class="field-error" id="c-metodo_pago-error" role="alert"></small>
+            </fieldset>
+          </div>
+          <div class="checkout-total"><span data-i18n="checkout.toPay">Total a pagar</span><strong id="checkout-total">S/ 0.00</strong></div>
+          <p id="checkout-error" class="error hidden" role="alert"></p>
+          <button type="submit" id="btn-pay" class="btn btn-primary btn-block" data-i18n="checkout.confirm">Confirmar pedido</button>
+        </form>
+      </div>
+
+      <div id="receipt-step" class="receipt hidden">
+        <div class="receipt-check" data-icon="check"></div>
+        <h2 data-i18n="receipt.title">¡Pedido confirmado!</h2>
+        <p class="muted" id="receipt-subtitle"></p>
+        <dl class="receipt-meta">
+          <div><dt data-i18n="receipt.code">Código de pedido</dt><dd id="receipt-code"></dd></div>
+          <div><dt data-i18n="receipt.date">Fecha</dt><dd id="receipt-date"></dd></div>
+          <div><dt data-i18n="receipt.payment">Pago</dt><dd id="receipt-payment"></dd></div>
+        </dl>
+        <ul id="receipt-items" class="receipt-items"></ul>
+        <div class="summary-row"><span data-i18n="cart.subtotal">Subtotal</span><span id="receipt-subtotal"></span></div>
+        <div class="summary-row"><span data-i18n="cart.tax">IGV (18%)</span><span id="receipt-igv"></span></div>
+        <div class="summary-row"><span data-i18n="cart.bag">Bolsa</span><span id="receipt-bolsa"></span></div>
+        <div class="summary-row total"><span data-i18n="cart.total">Total</span><span id="receipt-total"></span></div>
+        <button type="button" id="btn-continue" class="btn btn-primary btn-block" data-i18n="cart.continue">Seguir comprando</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/i18n.js"></script>
+  <script src="/static/icons.js"></script>
+  <script src="/static/catalog.js"></script>
+  <script src="/static/validation.js"></script>
+  <script src="/static/realtime.js"></script>
+  <script src="/static/cart.js"></script>
+  <script src="/static/store.js"></script>
+</body>
+</html>

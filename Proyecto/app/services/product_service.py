@@ -11,6 +11,9 @@ from app.models.product import ProductCreate, ProductUpdate, ProductResponse
 #   (?:[^\W_]|[ .,'%()/+-]){1,59}   resto: letras/números o los signos permitidos
 NOMBRE_PATTERN = re.compile(r"^(?=.*[^\W\d_])[^\W_](?:[^\W_]|[ .,'%()/+-]){1,59}$")
 
+# Categorías de la tienda (las mismas claves que usa static/catalog.js).
+CATEGORIAS = ("abarrotes", "lacteos", "carnes", "frutas_verduras", "panaderia", "bebidas", "limpieza")
+
 NOMBRE_INVALIDO = (
     "El nombre del producto debe tener de 2 a 60 caracteres "
     "(letras, números, espacios y . , ' % ( ) / + -) e incluir al menos una letra."
@@ -39,7 +42,8 @@ class ProductService:
 
     def create_product(self, product_data: ProductCreate) -> ProductResponse:
         """Valida y crea un nuevo producto."""
-        self._validate_product_data(product_data.nombre, product_data.precio)
+        self._validate_product_data(product_data.nombre, product_data.precio, product_data.stock)
+        self._validate_categoria(product_data.categoria)
         return self._repository.create(product_data)
 
     def update_product(self, product_id: int, product_data: ProductUpdate) -> Optional[ProductResponse]:
@@ -52,6 +56,10 @@ class ProductService:
             self._validate_nombre(product_data.nombre)
         if product_data.precio is not None:
             self._validate_precio(product_data.precio)
+        if product_data.stock is not None:
+            self._validate_stock(product_data.stock)
+        if product_data.categoria is not None:
+            self._validate_categoria(product_data.categoria)
 
         # Verificar existencia en repositorio
         existing = self._repository.get_by_id(product_id)
@@ -66,10 +74,11 @@ class ProductService:
             raise ValueError("El ID del producto debe ser un entero positivo.")
         return self._repository.delete(product_id)
 
-    def _validate_product_data(self, nombre: str, precio: float) -> None:
+    def _validate_product_data(self, nombre: str, precio: float, stock: int) -> None:
         """Aplica todas las reglas de negocio para un producto nuevo."""
         self._validate_nombre(nombre)
         self._validate_precio(precio)
+        self._validate_stock(stock)
 
     def _validate_nombre(self, nombre: str) -> None:
         if not nombre or not nombre.strip():
@@ -80,3 +89,11 @@ class ProductService:
     def _validate_precio(self, precio: float) -> None:
         if precio <= 0:
             raise ValueError("El precio del producto debe ser estrictamente mayor a 0.")
+
+    def _validate_stock(self, stock: int) -> None:
+        if stock < 0 or stock > 99999:
+            raise ValueError("El stock del producto debe ser un entero entre 0 y 99999.")
+
+    def _validate_categoria(self, categoria: str) -> None:
+        if categoria not in CATEGORIAS:
+            raise ValueError("La categoría del producto no es válida.")

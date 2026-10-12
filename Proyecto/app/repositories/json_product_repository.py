@@ -50,6 +50,8 @@ class JsonProductRepository(ProductRepositoryInterface):
             id=self._current_id,
             nombre=product_data.nombre,
             precio=product_data.precio,
+            stock=product_data.stock,
+            categoria=product_data.categoria,
         )
         self._products[self._current_id] = new_product
         self._current_id += 1
@@ -66,6 +68,10 @@ class JsonProductRepository(ProductRepositoryInterface):
             updated_data["nombre"] = product_data.nombre
         if product_data.precio is not None:
             updated_data["precio"] = product_data.precio
+        if product_data.stock is not None:
+            updated_data["stock"] = product_data.stock
+        if product_data.categoria is not None:
+            updated_data["categoria"] = product_data.categoria
 
         updated_product = ProductResponse(**updated_data)
         self._products[product_id] = updated_product

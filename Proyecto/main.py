@@ -4,9 +4,11 @@ from pathlib import Path
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from app.controllers.product_controller import router as product_router
 from app.controllers.exchange_controller import router as exchange_router
+from app.controllers.order_controller import router as order_router
+from app.controllers.realtime_controller import router as realtime_router
 
 app = FastAPI(
     title="Sistema de Gestión de Productos",
@@ -20,7 +22,7 @@ async def revalidar_frontend(request: Request, call_next):
     # El navegador debe consultar siempre si el HTML/CSS/JS cambió, para no mostrar versiones viejas.
     response = await call_next(request)
     path = request.url.path
-    if path in ("/", "/carrito") or path.startswith("/static/"):
+    if path in ("/", "/admin") or path.startswith("/static/"):
         response.headers["Cache-Control"] = "no-cache"
     return response
 
@@ -28,6 +30,8 @@ async def revalidar_frontend(request: Request, call_next):
 # Registro de la capa de controladores/rutas
 app.include_router(product_router)
 app.include_router(exchange_router)
+app.include_router(order_router)
+app.include_router(realtime_router)
 
 # Frontend estático (HTML/CSS/JS) para probar la API sin Postman
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -52,13 +56,19 @@ def _pagina(nombre: str) -> HTMLResponse:
 
 
 @app.get("/", tags=["General"])
-def root():
-    return _pagina("index.html")
+def tienda_page():
+    return _pagina("tienda.html")
 
 
-@app.get("/carrito", tags=["General"])
+@app.get("/admin", tags=["General"])
+def admin_page():
+    return _pagina("admin.html")
+
+
+@app.get("/carrito", tags=["General"], include_in_schema=False)
 def carrito_page():
-    return _pagina("carrito.html")
+    # El carrito ahora es un panel lateral dentro de la tienda.
+    return RedirectResponse("/")
 
 
 if __name__ == "__main__":

@@ -1,19 +1,16 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from app.models.product import ProductCreate, ProductUpdate, ProductResponse
 from app.services.product_service import ProductService
 from app.repositories.base import ProductRepositoryInterface
-from app.repositories.json_product_repository import JsonProductRepository
+from app import container
 
 router = APIRouter(prefix="/api/productos", tags=["Productos"])
 
-# Instancia compartida del repositorio (en un entorno real podría ser manejada por un contenedor IoC)
-_product_repository_instance: ProductRepositoryInterface = JsonProductRepository()
-
 
 def get_product_repository() -> ProductRepositoryInterface:
-    """Proveedor de dependencias para el Repositorio (DIP)."""
-    return _product_repository_instance
+    """Proveedor de dependencias para el Repositorio (DIP). La instancia vive en app/container.py."""
+    return container.product_repository
 
 
 def get_product_service(
@@ -51,19 +48,25 @@ def get_product(
 @router.post("", response_model=ProductResponse, status_code=status.HTTP_201_CREATED)
 def create_product(
     product_data: ProductCreate,
+    background_tasks: BackgroundTasks,
     service: ProductService = Depends(get_product_service),
 ) -> ProductResponse:
     """Capa de Presentación: Recibe el payload JSON, invoca al servicio y retorna el recurso creado."""
     try:
-        return service.create_product(product_data)
+        created = service.create_product(product_data)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
+
+    # Tras responder, se avisa por WebSocket a todas las pestañas abiertas.
+    background_tasks.add_task(container.realtime_service.notificar_producto, "creado", created)
+    return created
 
 
 @router.put("/{product_id}", response_model=ProductResponse, status_code=status.HTTP_200_OK)
 def update_product(
     product_id: int,
     product_data: ProductUpdate,
+    background_tasks: BackgroundTasks,
     service: ProductService = Depends(get_product_service),
 ) -> ProductResponse:
     """Capa de Presentación: Actualiza un producto existente."""
@@ -77,16 +80,20 @@ def update_product(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Producto con id {product_id} no encontrado para actualizar.",
         )
+
+    background_tasks.add_task(container.realtime_service.notificar_producto, "actualizado", updated)
     return updated
 
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_product(
     product_id: int,
+    background_tasks: BackgroundTasks,
     service: ProductService = Depends(get_product_service),
 ) -> None:
     """Capa de Presentación: Elimina un producto por su ID."""
     try:
+        product = service.get_product_by_id(product_id)
         deleted = service.delete_product(product_id)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
@@ -96,3 +103,7 @@ def delete_product(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Producto con id {product_id} no encontrado para eliminar.",
         )
+
+    # Las unidades que otros clientes tenían reservadas de este producto dejan de existir.
+    container.stock_reservation_service.olvidar_producto(product_id)
+    background_tasks.add_task(container.realtime_service.notificar_producto, "eliminado", product)

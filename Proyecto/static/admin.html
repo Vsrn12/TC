@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MercaFresh · Panel de administración</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="admin-body">
+  <div class="announce">
+    <span class="api-badge">Api: Open Exchange Rates (Cambio de moneda constante)</span>
+    <span class="announce-center"><span data-i18n="announce.fx">Tipo de cambio en vivo</span>: <strong id="fx-rate">1 USD = S/ 3.75</strong></span>
+    <div class="locale-bar">
+      <span id="current-date" class="current-date"></span>
+      <select id="locale-select" class="locale-select" data-i18n-aria-label="locale.label" aria-label="Idioma y región">
+        <option value="pe">PE (Español)</option>
+        <option value="us">EEUU (English)</option>
+      </select>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <a href="/" class="brand"><span class="brand-logo" data-icon="shopping-basket"></span><span class="brand-name">Merca<span>Fresh</span></span><span class="brand-tag">Admin</span></a>
+    <span class="header-spacer"></span>
+    <nav class="nav-links">
+      <a href="/" data-i18n="nav.store">Tienda</a>
+      <a href="/admin" class="active" data-i18n="nav.admin">Panel admin</a>
+    </nav>
+    <span id="rt-status" class="rt-status offline" role="status"></span>
+  </header>
+
+  <main class="admin">
+    <div class="admin-head">
+      <div>
+        <h1 data-i18n="admin.title">Panel de administración</h1>
+        <p class="muted" data-i18n="admin.subtitle">Ventas, pedidos y stock actualizados en tiempo real.</p>
+      </div>
+    </div>
+
+    <section class="kpis">
+      <article class="kpi kpi-green">
+        <span class="kpi-icon" data-icon="circle-dollar-sign"></span>
+        <div>
+          <span class="kpi-label" data-i18n="kpi.sales">Ventas totales</span>
+          <strong id="kpi-sales" class="kpi-value">S/ 0.00</strong>
+          <small id="kpi-sales-hint" class="kpi-hint"></small>
+        </div>
+      </article>
+      <article class="kpi kpi-blue">
+        <span class="kpi-icon" data-icon="receipt"></span>
+        <div>
+          <span class="kpi-label" data-i18n="kpi.orders">Pedidos</span>
+          <strong id="kpi-orders" class="kpi-value">0</strong>
+          <small id="kpi-orders-hint" class="kpi-hint"></small>
+        </div>
+      </article>
+      <article class="kpi kpi-violet">
+        <span class="kpi-icon" data-icon="package-check"></span>
+        <div>
+          <span class="kpi-label" data-i18n="kpi.units">Unidades vendidas</span>
+          <strong id="kpi-units" class="kpi-value">0</strong>
+          <small id="kpi-units-hint" class="kpi-hint"></small>
+        </div>
+      </article>
+      <article class="kpi kpi-amber">
+        <span class="kpi-icon" data-icon="triangle-alert"></span>
+        <div>
+          <span class="kpi-label" data-i18n="kpi.lowStock">Productos con stock bajo</span>
+          <strong id="kpi-low" class="kpi-value">0</strong>
+          <small id="kpi-low-hint" class="kpi-hint"></small>
+        </div>
+      </article>
+    </section>
+
+    <section class="admin-grid">
+      <article class="panel">
+        <h2 data-i18n="admin.byCategory">Ventas por categoría</h2>
+        <div id="category-bars" class="bars"></div>
+      </article>
+      <article class="panel">
+        <h2><span data-i18n="admin.recentOrders">Pedidos recientes</span> <span class="live-badge"><span class="pulse-dot"></span><span data-i18n="admin.live">En vivo</span></span></h2>
+        <ul id="orders-feed" class="orders-feed"></ul>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2 data-i18n="admin.products">Productos</h2>
+        <label class="search small">
+          <span class="search-icon" data-icon="search"></span>
+          <input type="search" id="product-search" data-i18n-placeholder="admin.searchProducts" placeholder="Buscar producto…" autocomplete="off">
+        </label>
+      </div>
+
+      <form id="product-form" class="product-form" novalidate>
+        <input type="hidden" id="product-id">
+        <div class="field grow">
+          <input type="text" id="nombre" data-i18n-placeholder="form.name" placeholder="Nombre del producto" autocomplete="off">
+          <small class="field-error" id="nombre-error" role="alert"></small>
+        </div>
+        <div class="field">
+          <input type="text" id="precio" inputmode="decimal" data-i18n-placeholder="form.price" placeholder="Precio (S/)" autocomplete="off">
+          <small class="field-error" id="precio-error" role="alert"></small>
+        </div>
+        <div class="field field-stock">
+          <input type="text" id="stock" inputmode="numeric" data-i18n-placeholder="form.stock" placeholder="Stock" autocomplete="off">
+          <small class="field-error" id="stock-error" role="alert"></small>
+        </div>
+        <div class="field">
+          <select id="categoria" data-i18n-aria-label="form.category" aria-label="Categoría"></select>
+          <small class="field-error" id="categoria-error" role="alert"></small>
+        </div>
+        <button type="submit" id="submit-btn" class="btn btn-primary">Agregar</button>
+        <button type="button" id="cancel-btn" class="btn btn-ghost hidden" data-i18n="form.cancel">Cancelar</button>
+      </form>
+
+      <p id="error-message" class="error hidden"></p>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th data-i18n="table.id">ID</th>
+              <th data-i18n="table.product">Producto</th>
+              <th data-i18n="table.price">Precio</th>
+              <th data-i18n="table.stock">Stock</th>
+              <th data-i18n="table.actions">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="products-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span class="brand-name small">Merca<span>Fresh</span></span>
+    <span data-i18n="footer.text">Proyecto académico · Arquitectura en N capas con FastAPI</span>
+    <span data-i18n="footer.tech">Compra segura · Stock en tiempo real · Delivery en Lima</span>
+    <span>Piero Delgado</span>
+  </footer>
+
+  <script src="/static/i18n.js"></script>
+  <script src="/static/icons.js"></script>
+  <script src="/static/catalog.js"></script>
+  <script src="/static/validation.js"></script>
+  <script src="/static/realtime.js"></script>
+  <script src="/static/admin-products.js"></script>
+  <script src="/static/dashboard.js"></script>
+</body>
+</html>
