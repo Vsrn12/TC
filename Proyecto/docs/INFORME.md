@@ -2,8 +2,7 @@
 
 ## MercaFresh: supermercado en línea con arquitectura en N capas
 
-**Autor:** Piero Delgado
-**Fecha:** 12/10/2026
+**Particpante:** Piero Adrian Delgado Chipana
 **Tecnologías:** Python 3.13 · FastAPI · JavaScript · HTML/CSS
 
 ![Tienda MercaFresh](capturas/00-tienda.png)
@@ -21,11 +20,11 @@ Este avance presenta las cuatro tecnologías pedidas funcionando sobre una arqui
 
 | Requisito | Estado | Sección |
 |---|---|---|
-| Arquitectura en N capas | ✅ Implementado | [2](#2-arquitectura-en-n-capas) |
-| Funciones stateful y stateless | ✅ Implementado | [3](#3-funciones-stateful-y-stateless) |
-| Internacionalización | ✅ Implementado | [4](#4-internacionalización-i18n) |
-| Validación front-end y back-end | ✅ Implementado | [5](#5-validación-front-end-y-back-end) |
-| Web Sockets | ✅ Implementado | [6](#6-web-sockets-tiempo-real) |
+| Arquitectura en N capas |  Implementado | [2](#2-arquitectura-en-n-capas) |
+| Funciones stateful y stateless |  Implementado | [3](#3-funciones-stateful-y-stateless) |
+| Internacionalización |  Implementado | [4](#4-internacionalización-i18n) |
+| Validación front-end y back-end |  Implementado | [5](#5-validación-front-end-y-back-end) |
+| Web Sockets |  Implementado | [6](#6-web-sockets-tiempo-real) |
 
 ---
 
@@ -215,25 +214,3 @@ Los demás clientes conectados reciben un aviso:
 ![Edición en vivo](capturas/05-ws-editar.png)
 
 ---
-
-## 7. Conclusiones y próximos pasos
-
-- **Lo que ya está:** las cuatro tecnologías funcionan integradas en un flujo de compra completo. Las reglas de negocio están en la capa de servicios, la validación es doble y el tiempo real mantiene coherente el stock entre varios clientes.
-- **Lo que viene:** reemplazar los archivos JSON por una base de datos (gracias a DIP, sin tocar los servicios), agregar inicio de sesión para el panel y pruebas automatizadas.
-
----
-
-## Cómo reproducir
-
-```
-pip install -r requirements.txt
-python main.py
-```
-
-| Qué | Dónde |
-|---|---|
-| Tienda | `http://127.0.0.1:8000/` |
-| Panel | `http://127.0.0.1:8000/admin` |
-| Swagger | `http://127.0.0.1:8000/docs` |
-
-Para ver el tiempo real, abre la tienda y el panel lado a lado (**Win + ←** y **Win + →**).
